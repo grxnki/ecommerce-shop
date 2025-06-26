@@ -1,0 +1,17 @@
+<div *ngIf="products$ | async as products; else loading">
+  <a *ngFor="let product of products" 
+     [routerLink]="['/products', product.id]" 
+     style="text-decoration: none; color: inherit; display: block;">
+
+    <div style="border: 1px solid #ccc; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; cursor: pointer;">
+      <h2>{{ product.name }}</h2>
+      <p>{{ product.description }}</p>
+      <strong>Preis: {{ product.price | currency:'EUR' }}</strong>
+    </div>
+
+  </a>
+</div>
+
+<ng-template #loading>
+  <p>Lade Produkte...</p>
+</ng-template>
