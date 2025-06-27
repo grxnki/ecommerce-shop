@@ -1,0 +1,49 @@
+/* src/app/product-list/product-list.component.css */
+
+/* Der :host-Selektor stylt das Wurzelelement der Komponente selbst. */
+:host {
+  display: block;
+  padding-top: 1.5rem;
+}
+
+/* Das Grid, das unsere Produktkarten enthalten wird. */
+.product-grid {
+  display: grid;
+  /* Erstellt so viele Spalten wie möglich, die mind. 280px breit sind. */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem; /* Definiert den Abstand zwischen den Karten. */
+}
+
+/* Die einzelne Produktkarte. */
+.product-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+/* Ein kleiner Schwebe-Effekt, wenn man mit der Maus über die Karte fährt. */
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.product-card h2 {
+  font-size: 1.25rem;
+  margin-top: 0;
+  color: #333;
+}
+
+.product-card p {
+  flex-grow: 1; /* Sorgt dafür, dass die Beschreibung den Platz füllt. */
+  margin: 1rem 0;
+  color: #666;
+}
+
+.product-card strong {
+  font-size: 1.2rem;
+  color: #0056b3; /* Ein schönes, kräftiges Blau. */
+}

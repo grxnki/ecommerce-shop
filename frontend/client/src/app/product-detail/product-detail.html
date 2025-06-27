@@ -1,4 +1,4 @@
-<div *ngIf="product$ | async as product; else loading">
+<div *ngIf="product$ | async as product; else loading" style="padding: 1rem;">
   <h2>{{ product.name }}</h2>
   <p>{{ product.description }}</p>
   <hr>

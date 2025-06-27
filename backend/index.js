@@ -52,6 +52,17 @@ app.get('/', (req, res) => {
 app.get('/api/products', (req, res) => {
   res.json(products);
 });
+
+app.get('/api/products/:id', (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  const product = products.find(p => p.id === id);
+
+  if (product) {
+    res.json(product);
+  } else {
+    res.status(404).json({ message: 'Produkt nicht gefunden' });
+  }
+});
 // 5. Den Server starten und ihn auf dem definierten Port "lauschen" lassen
 app.listen(PORT, () => {
   console.log(`Server läuft auf http://localhost:${PORT}`);

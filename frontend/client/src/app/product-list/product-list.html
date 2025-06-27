@@ -1,15 +1,16 @@
-<div *ngIf="products$ | async as products; else loading">
-  <a *ngFor="let product of products" 
-     [routerLink]="['/products', product.id]" 
-     style="text-decoration: none; color: inherit; display: block;">
+<div *ngIf="products$ | async as products; else loading" class="product-grid">
 
-    <div style="border: 1px solid #ccc; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; cursor: pointer;">
+  <div *ngFor="let product of products" class="product-card" [routerLink]="['/products', product.id]">
+
+    <div>
       <h2>{{ product.name }}</h2>
       <p>{{ product.description }}</p>
-      <strong>Preis: {{ product.price | currency:'EUR' }}</strong>
     </div>
 
-  </a>
+    <strong>Preis: {{ product.price | currency:'EUR' }}</strong>
+
+  </div>
+
 </div>
 
 <ng-template #loading>
