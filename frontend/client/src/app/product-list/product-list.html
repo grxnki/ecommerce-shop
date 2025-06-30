@@ -1,6 +1,6 @@
 <div *ngIf="products$ | async as products; else loading" class="product-grid">
 
-  <div *ngFor="let product of products" class="product-card" [routerLink]="['/products', product.id]">
+  <div *ngFor="let product of products" class="product-card" [routerLink]="['/products', product._id]">
 
     <div>
       <h2>{{ product.name }}</h2>

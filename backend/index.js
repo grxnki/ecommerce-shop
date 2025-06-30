@@ -1,86 +1,115 @@
-// 1. Notwendige Pakete importieren
+// backend/index.js --- FINALE VERSION MIT ECHTER DATENBANK-LOGIK ---
+const User = require('./models/user.model.js');
+const bcrypt = require('bcrypt');
 const express = require('express');
 const cors = require('cors');
-// 2. Eine neue Express-Anwendung erstellen
+const mongoose = require('mongoose');
+const Product = require('./models/product.model.js'); // Wichtig: Unser Produkt-Modell importieren
+
 const app = express();
-
-app.use(cors());
-
-// Füge diesen Block nach der Zeile "const app = express();" ein
-
-// BEISPIEL-DATEN (später kommt das aus einer Datenbank)
-const products = [
-  {
-    id: 1,
-    name: 'Eco-Friendly Wasserflasche',
-    description: 'Wiederverwendbare Wasserflasche aus nachhaltigen Materialien.',
-    price: 15.99,
-    imageUrl: 'https://example.com/images/waterbottle.jpg'
-  },
-  {
-    id: 2,
-    name: 'Solar-Powerbank',
-    description: 'Lade deine Geräte unterwegs mit der Kraft der Sonne.',
-    price: 39.99,
-    imageUrl: 'https://example.com/images/powerbank.jpg'
-  },
-  {
-    id: 3,
-    name: 'Bambus-Zahnbürsten (4er-Pack)',
-    description: 'Eine umweltfreundliche Alternative zu Plastikzahnbürsten.',
-    price: 9.99,
-    imageUrl: 'https://example.com/images/toothbrush.jpg'
-  }
-];
-
-// 3. Den Port definieren, auf dem der Server laufen soll
-// Wir wählen 3000 für das Backend. Das Frontend (Angular) läuft später standardmäßig auf 4200.
 const PORT = 3000;
+app.use(cors());
+app.use(express.json()); 
 
-// 4. Eine erste "Route" definieren
-// Eine Route ist wie eine URL-Adresse. Wenn jemand http://localhost:3000/ aufruft,
-// wird die Funktion hier ausgeführt.
-app.get('/', (req, res) => {
-  // Wir senden eine einfache JSON-Antwort zurück
-  res.json({ message: "Willkommen bei der E-Commerce API!" });
-});
+const DB_CONNECTION_STRING = "mongodb+srv://grxnki:12345@cluster0.fe0vfsa.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0DEIN_VOLLSTÄNDIGER_CONNECTION_STRING"; // Hier steht dein String drin
 
-// Füge diesen Block vor "app.listen(...)" ein
+// --- Seeding-Funktion ---
+// Diese Funktion prüft, ob Produkte in der DB sind und fügt sie ggf. hinzu.
+async function seedDatabase() {
+  try {
+    const productCount = await Product.countDocuments();
+    if (productCount === 0) {
+      console.log('ℹ️ Keine Produkte in der DB gefunden, fülle sie mit Beispieldaten...');
+      const sampleProducts = [
+        { name: 'Eco-Friendly Wasserflasche', description: 'Wiederverwendbare Wasserflasche aus nachhaltigen Materialien.', price: 15.99, imageUrl: '' },
+        { name: 'Solar-Powerbank', description: 'Lade deine Geräte unterwegs mit der Kraft der Sonne.', price: 39.99, imageUrl: '' },
+        { name: 'Bambus-Zahnbürsten (4er-Pack)', description: 'Eine umweltfreundliche Alternative zu Plastikzahnbürsten.', price: 9.99, imageUrl: '' }
+      ];
+      await Product.insertMany(sampleProducts);
+      console.log('✅ Beispieldaten erfolgreich in die DB eingefügt!');
+    } else {
+      console.log('ℹ️ Datenbank enthält bereits Produkte, Seeding wird übersprungen.');
+    }
+  } catch (error) {
+    console.error('❌ Fehler beim Seeding der Datenbank:', error);
+  }
+}
 
-// NEUE ROUTE: Gibt alle Produkte zurück
-// Es ist eine gute Konvention, API-Routen mit "/api" zu beginnen.
-app.get('/api/products', (req, res) => {
-  res.json(products);
-});
+// --- Datenbank-Verbindung & Server-Start ---
+mongoose.connect(DB_CONNECTION_STRING)
+  // NEUE ROUTE: Benutzer registrieren
+app.post('/api/users/register', async (req, res) => {
+  try {
+    // 1. Daten aus der Anfrage holen
+    const { email, password } = req.body;
 
-app.get('/api/products/:id', (req, res) => {
-  const id = parseInt(req.params.id, 10);
-  const product = products.find(p => p.id === id);
+    // 2. Prüfen, ob der Benutzer schon existiert
+    const existingUser = await User.findOne({ email: email });
+    if (existingUser) {
+      // 400 = Bad Request (fehlerhafte Anfrage)
+      return res.status(400).json({ message: 'Ein Benutzer mit dieser E-Mail existiert bereits.' });
+    }
 
-  if (product) {
-    res.json(product);
-  } else {
-    res.status(404).json({ message: 'Produkt nicht gefunden' });
+    // 3. Das Passwort hashen
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // 4. Neuen Benutzer erstellen
+    const newUser = new User({
+      email: email,
+      password: hashedPassword // Das gehashte Passwort speichern!
+    });
+
+    // 5. Benutzer in der Datenbank speichern
+    await newUser.save();
+
+    // 6. Erfolgsmeldung zurücksenden
+    // 201 = Created (erfolgreich erstellt)
+    res.status(201).json({ message: 'Benutzer erfolgreich registriert!' });
+
+  } catch (error) {
+    res.status(500).json({ message: 'Server-Fehler bei der Registrierung.', error: error });
   }
 });
-// 5. Den Server starten und ihn auf dem definierten Port "lauschen" lassen
-app.listen(PORT, () => {
-  console.log(`Server läuft auf http://localhost:${PORT}`);
+  .then(async () => { // "async" hinzugefügt, damit wir "await" benutzen können
+    console.log('✅ Erfolgreich mit der MongoDB-Datenbank verbunden!');
+    
+    await seedDatabase(); // Wir rufen die Seeding-Funktion nach der Verbindung auf
+    
+    app.listen(PORT, () => {
+      console.log(`🚀 Server läuft auf http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('❌ Fehler bei der Verbindung zur Datenbank:', err);
+    process.exit(1);
+  });
+
+// --- API-ROUTEN (JETZT MIT DATENBANK-LOGIK) ---
+
+// LÖSCHE ODER KOMMENTIERE DAS ALTE "products"-ARRAY AUS. WIR BRAUCHEN ES NICHT MEHR.
+
+// Route für ALLE Produkte (jetzt aus der DB)
+app.get('/api/products', async (req, res) => {
+  try {
+    const allProducts = await Product.find({}); // .find({}) holt alle Dokumente
+    res.json(allProducts);
+  } catch (error) {
+    res.status(500).json({ message: 'Fehler beim Abrufen der Produkte' });
+  }
 });
 
-app.get('/api/products/:id', (req, res) => {
-  // Die ID aus der URL auslesen (z.B. "1")
-  // req.params.id ist immer ein String, daher wandeln wir ihn in eine Zahl um
-  const id = parseInt(req.params.id, 10);
-
-  // Finde das Produkt im Array, dessen ID übereinstimmt
-  const product = products.find(p => p.id === id);
-
-  // Wenn ein Produkt gefunden wurde, sende es zurück
-  if (product) {
-    res.json(product);
-  } else {
-    // Wenn kein Produkt mit dieser ID existiert, sende einen 404-Fehler
-    res.status(404).json({ message: 'Produkt nicht gefunden' });
+// Route für EIN Produkt (jetzt aus der DB)
+app.get('/api/products/:id', async (req, res) => {
+  try {
+    // .findById() ist eine Mongoose-Funktion, die nach der einzigartigen _id sucht
+    const product = await Product.findById(req.params.id); 
+    if (product) {
+      res.json(product);
+    } else {
+      res.status(404).json({ message: 'Produkt nicht gefunden' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Fehler beim Abrufen des Produkts' });
   }
 });
