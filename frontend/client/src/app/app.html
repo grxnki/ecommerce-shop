@@ -1,5 +1,21 @@
 <div style="padding: 2rem;">
-  <h1>Willkommen in unserem Shop!</h1>
+  <nav style="margin-bottom: 2rem; border-bottom: 1px solid #ccc; padding-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <a routerLink="/products" style="margin-right: 1rem;">Produkte</a>
+    </div>
+
+    <div *ngIf="isLoggedIn$ | async; else loggedOut">
+      <button (click)="authService.logout()">Logout</button>
+    </div>
+
+    <ng-template #loggedOut>
+      <div>
+        <a routerLink="/login" style="margin-right: 1rem;">Login</a>
+        <a routerLink="/register">Registrieren</a>
+      </div>
+    </ng-template>
+
+  </nav>
 
   <router-outlet></router-outlet>
 </div>

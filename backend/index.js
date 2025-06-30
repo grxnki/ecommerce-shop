@@ -66,7 +66,49 @@ app.post('/api/users/register', async (req, res) => {
   }
 });
 
+// NEUE ROUTE: Benutzer einloggen
+app.post('/api/users/login', async (req, res) => {
+  try {
+    // 1. Daten aus der Anfrage holen
+    const { email, password } = req.body;
 
+    // 2. Benutzer in der DB suchen
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      // Wichtig: Keine spezifische Fehlermeldung geben ("Benutzer nicht gefunden"),
+      // um Angreifern keine Hinweise zu liefern.
+      return res.status(400).json({ message: 'E-Mail oder Passwort ist falsch.' });
+    }
+
+    // 3. Eingegebenes Passwort mit dem Hash in der DB vergleichen
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'E-Mail oder Passwort ist falsch.' });
+    }
+
+    // 4. Wenn alles passt, einen JWT erstellen (Payload)
+    const payload = {
+      user: {
+        id: user.id // Die ID des Benutzers in den Token packen
+      }
+    };
+
+    // 5. Den Token mit unserem geheimen Schlüssel signieren
+    jwt.sign(
+      payload,
+      process.env.JWT_SECRET, // Holt den Secret Key aus der .env-Datei
+      { expiresIn: '1h' }, // Der Token ist 1 Stunde gültig
+      (err, token) => {
+        if (err) throw err;
+        // 6. Den Token an den Client zurücksenden
+        res.json({ token });
+      }
+    );
+
+  } catch (error) {
+    res.status(500).json({ message: 'Server-Fehler beim Login.', error: error });
+  }
+});
 // --- DATENBANK-VERBINDUNG & SERVER-START ---
 // Dieser Block kommt GANZ ZUM SCHLUSS.
 mongoose.connect(DB_CONNECTION_STRING)

@@ -1,5 +1,3 @@
-// src/app/product-detail/product-detail.component.ts
-
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -16,7 +14,6 @@ import { Observable } from 'rxjs';
 export class ProductDetailComponent implements OnInit {
   route: ActivatedRoute = inject(ActivatedRoute);
   httpClient = inject(HttpClient);
-
   product$!: Observable<any>;
 
   ngOnInit(): void {

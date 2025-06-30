@@ -1,17 +1,19 @@
-// src/app/app.ts --- FINAL ---
 // src/app/app.ts
-import { Component } from '@angular/core';
+
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router'; // WIEDER IMPORTIEREN
-import { ProductListComponent } from './product-list/product-list';
+import { RouterOutlet, RouterLink } from '@angular/router';
+import { AuthService } from './services/auth'; // AuthService importieren
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, ProductListComponent, RouterOutlet], // HIER HINZUFÜGEN
+  imports: [CommonModule, RouterOutlet, RouterLink],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })
 export class AppComponent {
-  title = 'client';
+  authService = inject(AuthService); // AuthService holen
+  // Wir holen uns den Login-Status als Observable, damit unser Template ihn nutzen kann
+  isLoggedIn$ = this.authService.getLoginStatus();
 }
