@@ -1,11 +1,15 @@
-<div *ngIf="product$ | async as product; else loading" style="padding: 1rem;">
+<div *ngIf="product$ | async as product; else loading">
+
   <h2>{{ product.name }}</h2>
   <p>{{ product.description }}</p>
   <hr>
   <h3>Preis: {{ product.price | currency:'EUR' }}</h3>
 
-  <br>
+  <button (click)="addToCart(product)" style="margin-top: 1rem;">In den Warenkorb</button>
+
+  <br><br>
   <a routerLink="/products">Zurück zur Übersicht</a>
+
 </div>
 
 <ng-template #loading>

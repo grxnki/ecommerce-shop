@@ -16,3 +16,19 @@ Content-Type: application/json
   "email": "leonard@test.com",
   "password": "password123"
 }
+
+### Eine neue Bestellung aufgeben (benötigt Authentifizierung)
+POST http://localhost:3000/api/orders
+Content-Type: application/json
+# WICHTIG: Füge hier den Token hinzu, den du vom Login-Endpunkt bekommen hast
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjg2Mjc1YjkxODA5YmM3OGE5YjRlOTYwIn0sImlhdCI6MTc1MTM1NzQ5NCwiZXhwIjoxNzUxMzYxMDk0fQ.DMQshvWc580bTRKDKsj0icqvz8Jo0M-qAWoemh1BRh0
+
+{
+  "products": [
+    {
+      "name": "Eco-Friendly Wasserflasche",
+      "price": 15.99
+    }
+  ],
+  "totalPrice": 15.99
+}

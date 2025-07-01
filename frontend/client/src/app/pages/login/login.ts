@@ -1,9 +1,7 @@
-// src/app/pages/login/login.ts --- KORREKTE VERSION ---
-
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router'; // Router importieren
+import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
 
 @Component({
@@ -16,7 +14,7 @@ import { AuthService } from '../../services/auth';
 export class LoginComponent {
   fb = inject(FormBuilder);
   authService = inject(AuthService);
-  router = inject(Router); // Router hier "holen"
+  router = inject(Router);
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -28,7 +26,7 @@ export class LoginComponent {
       this.authService.login(this.loginForm.value).subscribe({
         next: (response) => {
           console.log('Login erfolgreich!', response);
-          this.router.navigate(['/products']); // Weiterleitung zur Produkt-Seite
+          this.router.navigate(['/products']);
         },
         error: (err) => {
           console.error('Fehler beim Login:', err);

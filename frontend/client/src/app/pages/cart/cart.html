@@ -1,1 +1,27 @@
-<p>cart works!</p>
+<div style="max-width: 800px; margin: auto; padding: 2rem;">
+  <h2>Dein Warenkorb</h2>
+
+  <div *ngIf="cartService.getItems().length > 0; else emptyCart">
+
+    <div *ngFor="let item of cartService.getItems()" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ccc; padding: 1rem 0;">
+      <span>{{ item.name }}</span>
+      <strong>{{ item.price | currency:'EUR' }}</strong>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem; font-size: 1.25rem; font-weight: bold;">
+      <span>Gesamt: &nbsp;</span>
+      <span>{{ getTotalPrice() | currency:'EUR' }}</span>
+    </div>
+
+    <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 1rem;">
+      <button (click)="clearCart()">Warenkorb leeren</button>
+      <button (click)="checkout()" style="background-color: #28a745;">Zur Kasse</button>
+    </div>
+
+  </div>
+
+  <ng-template #emptyCart>
+    <p>Dein Warenkorb ist noch leer.</p>
+  </ng-template>
+
+</div>

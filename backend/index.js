@@ -1,5 +1,5 @@
 // backend/index.js --- KORREKTE REIHENFOLGE ---
-
+const Order = require('./models/order.model.js');
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -7,7 +7,9 @@ const bcrypt = require('bcrypt');
 const Product = require('./models/product.model.js');
 const User = require('./models/user.model.js');
 const jwt = require('jsonwebtoken');
-require('dotenv').config(); // Lädt die Variablen aus unserer .env-Datei
+require('dotenv').config();
+
+
 
 const app = express();
 const PORT = 3000;
@@ -107,6 +109,40 @@ app.post('/api/users/login', async (req, res) => {
 
   } catch (error) {
     res.status(500).json({ message: 'Server-Fehler beim Login.', error: error });
+  }
+});
+// NEUE ROUTE: Eine Bestellung erstellen (geschützt)
+app.post('/api/orders', async (req, res) => {
+  try {
+    // 1. Token aus dem Header extrahieren
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    if (!token) {
+      // 401 = Unauthorized (nicht autorisiert)
+      return res.status(401).json({ message: 'Kein Token, Autorisierung verweigert.' });
+    }
+
+    // 2. Token verifizieren
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // "decoded" enthält jetzt unseren Payload, den wir beim Login erstellt haben, z.B. { user: { id: '...' } }
+    
+    // 3. Bestelldaten aus dem Request-Body holen
+    const { products, totalPrice } = req.body;
+
+    // 4. Neue Bestellung erstellen
+    const order = new Order({
+      user: decoded.user.id, // Die ID des eingeloggten Benutzers aus dem Token
+      products: products,
+      totalPrice: totalPrice
+    });
+
+    // 5. Bestellung in der Datenbank speichern
+    await order.save();
+
+    res.status(201).json({ message: 'Bestellung erfolgreich aufgegeben!', order: order });
+
+  } catch (error) {
+    // Wenn der Token ungültig ist, wirft jwt.verify einen Fehler, den wir hier abfangen
+    res.status(401).json({ message: 'Token ist nicht gültig.' });
   }
 });
 // --- DATENBANK-VERBINDUNG & SERVER-START ---
