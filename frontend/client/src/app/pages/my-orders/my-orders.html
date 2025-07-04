@@ -1,0 +1,28 @@
+<div style="max-width: 800px; margin: auto; padding: 2rem;">
+  <h2>Meine Bestellungen</h2>
+
+  <div *ngIf="orders$ | async as orders; else loading">
+    <div *ngIf="orders.length > 0; else noOrders">
+
+      <div *ngFor="let order of orders" style="border: 1px solid #ccc; padding: 1rem; margin-bottom: 1rem; border-radius: 8px;">
+        <p><strong>Bestelldatum:</strong> {{ order.orderDate | date:'dd.MM.yyyy HH:mm' }} Uhr</p>
+        <p><strong>Gesamtpreis:</strong> {{ order.totalPrice | currency:'EUR' }}</p>
+
+        <h4>Bestellte Produkte:</h4>
+        <ul>
+          <li *ngFor="let item of order.products">
+            {{ item.name }} - {{ item.price | currency:'EUR' }}
+          </li>
+        </ul>
+      </div>
+
+    </div>
+    <ng-template #noOrders>
+      <p>Du hast noch keine Bestellungen aufgegeben.</p>
+    </ng-template>
+  </div>
+
+  <ng-template #loading>
+    <p>Lade Bestellungen...</p>
+  </ng-template>
+</div>

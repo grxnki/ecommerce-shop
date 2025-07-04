@@ -1,18 +1,29 @@
 <div style="padding: 2rem;">
   <nav style="margin-bottom: 2rem; border-bottom: 1px solid #ccc; padding-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+
     <div>
       <a routerLink="/products" style="margin-right: 1rem;">Produkte</a>
-      <a *ngIf="isLoggedIn$ | async" routerLink="/cart">Warenkorb</a>
+
+      <ng-container *ngIf="isLoggedIn$ | async">
+        <a routerLink="/cart" style="margin-right: 1rem;">Warenkorb</a>
+        <a routerLink="/my-orders">Meine Bestellungen</a>
+      </ng-container>
     </div>
-    <div *ngIf="isLoggedIn$ | async; else loggedOut">
-      <button (click)="authService.logout()">Logout</button>
-    </div>
-    <ng-template #loggedOut>
-      <div>
-        <a routerLink="/login" style="margin-right: 1rem;">Login</a>
-        <a routerLink="/register">Registrieren</a>
+
+    <div>
+      <div *ngIf="isLoggedIn$ | async; else loggedOut">
+        <button (click)="authService.logout()">Logout</button>
       </div>
-    </ng-template>
+
+      <ng-template #loggedOut>
+        <div>
+          <a routerLink="/login" style="margin-right: 1rem;">Login</a>
+          <a routerLink="/register">Registrieren</a>
+        </div>
+      </ng-template>
+    </div>
+
   </nav>
+
   <router-outlet></router-outlet>
 </div>

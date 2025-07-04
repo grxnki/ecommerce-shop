@@ -21,14 +21,18 @@ Content-Type: application/json
 POST http://localhost:3000/api/orders
 Content-Type: application/json
 # WICHTIG: Füge hier den Token hinzu, den du vom Login-Endpunkt bekommen hast
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjg2Mjc1YjkxODA5YmM3OGE5YjRlOTYwIn0sImlhdCI6MTc1MTM1NzQ5NCwiZXhwIjoxNzUxMzYxMDk0fQ.DMQshvWc580bTRKDKsj0icqvz8Jo0M-qAWoemh1BRh0
-
-{
-  "products": [
-    {
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjg2N2ViM2JjMmJhYzBjMGE1MzgyYjc5In0sImlhdCI6MTc1MTY0MTUxMSwiZXhwIjoxNzUxNjQ1MTExfQ.KOxYUinLG-wdOvZUjY6LrrI2AgC2CGE1yLTzyXLhtB0
       "name": "Eco-Friendly Wasserflasche",
       "price": 15.99
     }
   ],
   "totalPrice": 15.99
 }
+
+### Meine Bestellungen abrufen (benötigt Authentifizierung)
+GET http://localhost:3000/api/orders/my-orders
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjg2Mjc1YjkxODA5YmM3OGE5YjRlOTYwIn0sImlhdCI6MTc1MTQ2NTMxOSwiZXhwIjoxNzUxNDY4OTE5fQ.W57LqX0WJN510NMN01S1T7pxRx_QnmDj6Nt0KYUngiI
+
+### ALLE Bestellungen abrufen (Admin)
+GET http://localhost:3000/api/admin/orders
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjg2N2Y5ZTc4MjY1ZjZlZWZkMTkxYmNkIn0sImlhdCI6MTc1MTY0NDcyNiwiZXhwIjoxNzUxNjQ4MzI2fQ.oZIbS6nWceMOmH0av0l5Uol5vs7JDPrx0MqL_mW5jn8

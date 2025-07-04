@@ -2,8 +2,9 @@
 
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { AuthService } from './auth'; // Wir brauchen den AuthService für den Token
+// HIER importieren wir jetzt alles Nötige von RxJS, inklusive "throwError"
+import { Observable, throwError, tap } from 'rxjs';
+import { AuthService } from './auth';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ import { AuthService } from './auth'; // Wir brauchen den AuthService für den T
 export class CartService {
   items: any[] = [];
   private httpClient = inject(HttpClient);
-  private authService = inject(AuthService); // AuthService holen
+  private authService = inject(AuthService);
   private backendUrl = 'http://localhost:3000/api/orders';
 
   constructor() { }
@@ -26,11 +27,16 @@ export class CartService {
     return this.items;
   }
 
-  // NEUE METHODE: Bestellung aufgeben
+  // Wir benutzen hier jetzt das importierte "throwError"
   placeOrder(): Observable<any> {
-    const token = this.authService.getToken(); // Token vom AuthService holen
+    const token = this.authService.getToken();
 
-    // Wichtig: Wir müssen den Token im Header der Anfrage mitschicken
+    if (!token) {
+      console.error('FEHLER: Kein Token gefunden! Der Benutzer ist wahrscheinlich nicht richtig eingeloggt.');
+      // Wir erstellen ein "fehlerhaftes" Observable und geben es zurück.
+      return throwError(() => new Error('Kein Authentifizierungs-Token gefunden.'));
+    }
+
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`

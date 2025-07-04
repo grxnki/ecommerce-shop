@@ -1,17 +1,24 @@
-// models/user.model.js
+// models/user.model.js --- DIE FINALE KORREKTUR ---
+
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true, // Jede E-Mail-Adresse darf nur einmal existieren
-    lowercase: true, // Speichert E-Mails immer in Kleinbuchstaben
-    trim: true // Entfernt Leerzeichen am Anfang und Ende
+    unique: true,
+    lowercase: true,
+    trim: true
   },
   password: {
     type: String,
     required: true
+  },
+  // DIESES FELD HAT IN DEINER DATEI GEFEHLT
+  role: {
+    type: String,
+    enum: ['user', 'admin'], // Erlaubt nur diese beiden Werte
+    default: 'user'         // Standardwert für neue Benutzer
   }
 });
 
