@@ -4,6 +4,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap } from 'rxjs';
 import { Router } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
@@ -49,5 +50,22 @@ export class AuthService {
     localStorage.removeItem('auth_token');
     this.isLoggedIn$.next(false);
     this.router.navigate(['/login']);
+  }
+
+  public isAdmin(): boolean {
+    const token = this.getToken();
+    if (!token) {
+      return false;
+    }
+
+    try {
+      // Wir dekodieren den Token, um an den Payload (die Daten) zu kommen
+      const decodedToken: { user: { id: string, role?: string } } = jwtDecode(token);
+      // Wir prüfen, ob die Rolle 'admin' ist
+      return decodedToken.user.role === 'admin';
+    } catch (error) {
+      // Wenn der Token ungültig ist, ist der Benutzer auch kein Admin
+      return false;
+    }
   }
 }

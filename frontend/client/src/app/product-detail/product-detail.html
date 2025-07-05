@@ -1,14 +1,24 @@
 <div *ngIf="product$ | async as product; else loading">
 
-  <h2>{{ product.name }}</h2>
-  <p>{{ product.description }}</p>
-  <hr>
-  <h3>Preis: {{ product.price | currency:'EUR' }}</h3>
+  <div class="detail-container">
 
-  <button (click)="addToCart(product)" style="margin-top: 1rem;">In den Warenkorb</button>
+    <div class="info-column">
+      <h2>{{ product.name }}</h2>
+      <p>{{ product.description }}</p>
+      <hr>
+      <h3>Preis: {{ product.price | currency:'EUR' }}</h3>
 
-  <br><br>
-  <a routerLink="/products">Zurück zur Übersicht</a>
+      <div class="actions">
+        <button (click)="addToCart(product)">In den Warenkorb</button>
+        <a routerLink="/products">Zurück zur Übersicht</a>
+      </div>
+    </div>
+
+    <div class="image-column">
+      <img [src]="product.imageUrl" [alt]="product.name" *ngIf="product.imageUrl">
+    </div>
+
+  </div>
 
 </div>
 

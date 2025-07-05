@@ -1,0 +1,121 @@
+# k8s-deployment.yml --- FINALE, ROBUSTE VERSION ---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ecommerce-secrets
+stringData:
+  MONGO_URI: "mongodb+srv://grxnki:12345@cluster0.fe0vfsa.mongodb.net/shop-db?retryWrites=true&w=majority&appName=Cluster0"
+  JWT_SECRET: "MEIN_SUPER_GEHEIMER_SCHLUESSEL_DER_LANG_UND_ZUFÄLLIG_IST_123!"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: ecommerce-backend:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+        env:
+        - name: MONGO_URI
+          valueFrom:
+            secretKeyRef:
+              name: ecommerce-secrets
+              key: MONGO_URI
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: ecommerce-secrets
+              key: JWT_SECRET
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  selector:
+    app: backend
+  ports:
+  - protocol: TCP
+    port: 3000
+    targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: ecommerce-frontend:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  selector:
+    app: frontend
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+---
+# Ersetze den gesamten Ingress-Block mit diesem hier:
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ecommerce-ingress
+  annotations:
+    # Diese Annotation ist der Schlüssel: Sie schreibt die URL um.
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  # Wir sagen dem Ingress-Controller, dass er für uns zuständig ist.
+  ingressClassName: nginx
+  rules:
+  - host: localhost
+    http:
+      paths:
+      # Regel 1: Fängt alles ab, was /api, /api/ oder /api/irgendwas ist.
+      - path: /api(/|$)(.*)
+        # Wir sagen Kubernetes, dass dies ein spezieller Pfad (Regex) ist.
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: backend-service
+            port:
+              number: 3000
+      # Regel 2: Fängt alles andere ab (die Frontend-Anfragen).
+      - path: /()(.*)
+        # Wir sagen Kubernetes, dass dies ein spezieller Pfad (Regex) ist.
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: frontend-service
+            port:
+              number: 80

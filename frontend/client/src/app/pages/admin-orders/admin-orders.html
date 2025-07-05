@@ -1,10 +1,11 @@
 <div style="max-width: 800px; margin: auto; padding: 2rem;">
-  <h2>Alle Bestellungen</h2>
+  <h2>Alle Bestellungen im System</h2>
 
   <div *ngIf="orders$ | async as orders; else loading">
     <div *ngIf="orders.length > 0; else noOrders">
 
       <div *ngFor="let order of orders" style="border: 1px solid #ccc; padding: 1rem; margin-bottom: 1rem; border-radius: 8px;">
+        <p style="font-size: 0.9rem; color: #666;">Bestell-ID: {{order._id}}</p>
         <p><strong>Bestellt von:</strong> {{ order.user.email }}</p>
         <p><strong>Bestelldatum:</strong> {{ order.orderDate | date:'dd.MM.yyyy HH:mm' }} Uhr</p>
 
@@ -14,7 +15,7 @@
             {{ item.name }} - {{ item.price | currency:'EUR' }}
           </li>
         </ul>
-        <p style="text-align: right;"><strong>Gesamt:</strong> {{ order.totalPrice | currency:'EUR' }}</p>
+        <p style="text-align: right; font-weight: bold; font-size: 1.1rem;">Gesamt: {{ order.totalPrice | currency:'EUR' }}</p>
       </div>
 
     </div>

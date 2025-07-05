@@ -1,0 +1,12 @@
+/* src/app/layout/layout.css */
+.spacer {
+  flex: 1 1 auto;
+}
+
+mat-toolbar a {
+  margin: 0 8px;
+}
+
+.content {
+  padding: 20px;
+}

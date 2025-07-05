@@ -1,14 +1,15 @@
-// src/app/product-list/product-list.component.ts --- FINAL ---
-
+// src/app/product-list/product-list.ts
 import { Component, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { CommonModule } from '@angular/common'; 
+import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, RouterLink], // HIER HINZUFÜGEN! Das ist entscheidend.
+  imports: [ CommonModule, RouterLink, MatCardModule ],
   templateUrl: './product-list.html',
   styleUrls: ['./product-list.css']
 })

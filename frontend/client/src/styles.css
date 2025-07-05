@@ -1,1 +1,28 @@
-/* You can add global styles to this file, and also import other style files */
+/* src/styles.css */
+
+/* Importiert das Angular Material Theme */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+/* Grundlegende Body-Styles */
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: #fafafa;
+}
+
+/* Das Grid-Layout für die Produktliste */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+
+  /* NEUE ZEILEN FÜR DIE ZENTRIERUNG DES GESAMTEN BLOCKS */
+  max-width: 1100px; /* Das Grid wird maximal 1100px breit */
+  margin: 0 auto;    /* Zentriert den Grid-Container horizontal auf der Seite */
+}
+
+/* Stellt sicher, dass die Karten klickbar aussehen */
+.product-card {
+  cursor: pointer;
+}

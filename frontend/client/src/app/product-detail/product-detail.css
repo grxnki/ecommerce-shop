@@ -1,0 +1,42 @@
+/* src/app/product-detail/product-detail.css */
+
+/* Haupt-Container wird zum Flexbox-Container */
+.detail-container {
+  display: flex;
+  flex-wrap: wrap; /* Erlaubt den Spalten, auf kleinen Bildschirmen umzubrechen */
+  gap: 2rem;       /* Abstand zwischen den Spalten */
+  max-width: 1000px;
+  margin: 2rem auto;
+}
+
+/* Beide Spalten sollen flexibel sein */
+.info-column, .image-column {
+  flex: 1; /* Beide Spalten versuchen, gleich viel Platz einzunehmen */
+  min-width: 300px; /* Mindestbreite, bevor sie umbrechen */
+}
+
+/* Spezifische Styles für die Info-Spalte */
+.info-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-column h2 {
+  margin-top: 0;
+}
+
+.info-column .actions {
+  margin-top: auto; /* Drückt die Buttons nach unten */
+  padding-top: 1rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+/* Spezifische Styles für die Bild-Spalte */
+.image-column img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}

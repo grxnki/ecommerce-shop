@@ -1,0 +1,10 @@
+# monitoring/prometheus.yml
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'node-app'
+    static_configs:
+      # Hier sagen wir Prometheus, dass es auf unserem Host-Computer (außerhalb von Docker)
+      # auf Port 3000 nach dem /metrics Endpunkt suchen soll.
+      - targets: ['host.docker.internal:3000']
